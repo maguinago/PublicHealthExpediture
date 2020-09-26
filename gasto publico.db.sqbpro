@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/Guilherme/Desktop/Univ do Porto/Disciplinas/Sistemas de Informação e Bases de Dados/gasto publico.db" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><current_tab id="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="2351"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="health_expenditure"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="education" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk=""><sort/><column_widths/><filter_values/><display_formats/><hidden_columns/><plot_y_axes/></table><table schema="main" name="health_expenditure" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk=""><sort><column index="19" mode="1"/></sort><column_widths><column index="2" value="236"/><column index="4" value="347"/><column index="8" value="231"/></column_widths><filter_values><column index="2" value="GOVERN"/><column index="7" value=""/><column index="8" value=""/><column index="9" value=""/><column index="10" value="united states"/><column index="11" value="2019"/><column index="12" value=""/><column index="13" value=""/><column index="22" value=""/><column index="23" value=""/></filter_values><display_formats/><hidden_columns/><plot_y_axes><y_axis name="ReferencePeriod" line_style="2" point_shape="11" colour="#4b1f6f" active="0"/><y_axis name="Row #" line_style="2" point_shape="11" colour="#ff950e" active="0"/><y_axis name="Value" line_style="2" point_shape="11" colour="#aecf00" active="0"/><y_axis name="value_eur" line_style="2" point_shape="11" colour="#314004" active="1"/></plot_y_axes></table><table schema="main" name="share-social-protection-in-government-exp-oecd-2013" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk=""><sort/><column_widths/><filter_values/><display_formats/><hidden_columns/><plot_y_axes/></table></browse_table_settings></tab_browse><tab_sql><sql name="exchange_rate">ALTER TABLE health_expenditure -- add exchange_rate column
+ADD COLUMN exchange_rate INTEGER;
+UPDATE health_expenditure
+SET exchange_rate = 1
+WHERE UnitCode = &quot;EUR&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.85
+WHERE UnitCode = &quot;USD&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.64
+WHERE UnitCode = &quot;CAD&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.29
+WHERE UnitCode = &quot;HUF&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.23
+WHERE UnitCode = &quot;PLN&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.96
+WHERE UnitCode = &quot;CHF&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.00071
+WHERE UnitCode = &quot;KRW&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.61
+WHERE UnitCode = &quot;AUD&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.0014
+WHERE UnitCode = &quot;CRC&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.096
+WHERE UnitCode = &quot;SEK&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.038
+WHERE UnitCode = &quot;CZK&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.038
+WHERE UnitCode = &quot;MXN&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.094
+WHERE UnitCode = &quot;NOK&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.13
+WHERE UnitCode = &quot;DKK&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.0061
+WHERE UnitCode = &quot;ISK&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.0080
+WHERE UnitCode = &quot;JPY&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 1,11
+WHERE UnitCode = &quot;GBP&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.0062
+WHERE UnitCode = &quot;ILS&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.011
+WHERE UnitCode = &quot;RUB&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.0011
+WHERE UnitCode = &quot;CLP&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.55
+WHERE UnitCode = &quot;NZD&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.12
+WHERE UnitCode = &quot;TRY&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.00022
+WHERE UnitCode = &quot;COP&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.15
+WHERE UnitCode = &quot;BRL&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.12
+WHERE UnitCode = &quot;CNY&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.000057
+WHERE UnitCode = &quot;IDR&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.011
+WHERE UnitCode = &quot;INR&quot;;
+UPDATE health_expenditure
+SET exchange_rate = 0.049
+WHERE UnitCode = &quot;ZAR&quot;;</sql><sql name="aplly_exchange">ALTER TABLE health_expenditure
+ADD COLUMN value_eur;
+UPDATE health_expenditure
+SET value_eur = Value * exchange_rate;</sql><sql name="2010">select country, year, value_eur
+from health_expenditure
+	WHERE Country is not &quot;Hungary&quot;
+	and MEASUR = &quot;UNPPER&quot;
+	and Financingscheme = &quot;Government/compulsory schemes&quot;
+order by year;</sql><sql name="SQL 6">select country,
+		year,SUM(CASE WHEN MEASUR = &quot;UNPPER&quot; THEN value_eur ELSE 0 END) as PC_govt_expdt
+from health_expenditure
+	WHERE Country is not &quot;Hungary&quot;
+	and Financingscheme = &quot;Government/compulsory schemes&quot;
+	group by country
+order by country DESC;</sql><sql name="US_2010-2019">select country, year,SUM(value_eur) as PC_govt_expdt
+from health_expenditure
+	WHERE Country is not &quot;Hungary&quot;
+	and MEASUR = &quot;UNPPER&quot;
+	and Financingscheme = &quot;Government/compulsory schemes&quot;
+	and Country = &quot;United States&quot;
+	group by year
+order by year ASC;</sql><current_tab id="2"/></tab_sql></sqlb_project>
